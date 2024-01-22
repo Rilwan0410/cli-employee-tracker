@@ -1,8 +1,8 @@
 const mysql = require("mysql2");
 const inquirer = require("inquirer");
 const dotenv = require("dotenv");
-const { getData, insertData } = require("./db/database");
-const {capitalize} = require('./utils/utils')
+const { getData, insertData, findspecificData } = require("./db/database");
+const { capitalize } = require("./utils/utils");
 dotenv.config();
 const database = mysql.createConnection(
   {
@@ -65,14 +65,51 @@ inquirer
             },
           ])
           .then((answers) => {
-            answers.addDepartment = capitalize(answers.addDepartment)
-            insertData('department', ["name"],[ `'${answers.addDepartment}'`])
-            console.log(`Added ${answers.addDepartment} to Department database`)
+            answers.addDepartment = capitalize(answers.addDepartment);
+            insertData("department", ["name"], [`'${answers.addDepartment}'`]);
+            console.log(
+              `Added ${answers.addDepartment} to Department database`
+            );
           });
 
         break;
-      //case:
-      // break;
+      case "Add A Role":
+        inquirer
+          .prompt([
+            {
+              type: "input",
+              name: "roleName",
+              message: "What is the name of the role?",
+            },
+            {
+              type: "number",
+              name: "salary",
+              message: "What is the salary of the role?",
+            },
+            {
+              type: "input",
+              name: "roleDepartment",
+              message: "Which department does the role belong to?",
+            },
+          ])
+          .then(async (answers) => {
+            let { id } = await findspecificData(
+              'department',
+              "id",
+              "name",
+              `'${answers.roleDepartment}'`
+            );
+            answers.roleName = capitalize(answers.roleName);
+            answers.roleDepartment = capitalize(answers.roleDepartment);
+            insertData(
+              "role",
+              ["title", "salary", "department_id"],
+              [`'${answers.roleName}'`, answers.salary, id]
+            );
+            // console.log(answers);
+            console.log(`Added ${answers.roleName} to ${answers.roleDepartment} database.`)
+          });
+        break;
       //case:
       // break;
     }

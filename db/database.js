@@ -45,11 +45,26 @@ async function insertData(tableName, filter, values) {
   }
 }
 
-// async function createData(){
-
-// }
+async function findspecificData( table,fieldOne, fieldTwo, findBy) {
+  try {
+    const db = await mysql.createConnection({
+      host: process.env.HOST,
+      user: process.env.MYSQL_USER,
+      password: process.env.MYSQL_PASSWORD,
+      port: process.env.MYSQL_PORT,
+      database: process.env.DATABASE,
+    });
+    let [data] = await db.query(
+      `SELECT ${fieldOne} FROM ${table} WHERE ${fieldTwo} = ${findBy}`
+    );
+    return data[0];
+  } catch (err) {
+    console.log(err);
+  }
+}
 
 module.exports = {
   getData,
   insertData,
+  findspecificData,
 };

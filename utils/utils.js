@@ -10,7 +10,7 @@ function capitalize(word) {
   word.split(" ").forEach((word) => {
     let firstLetter = word[0].toUpperCase();
 
-    let restOfWord = word.slice(1);
+    let restOfWord = word.slice(1).toLowerCase();
 
     let fullWord = firstLetter + restOfWord;
 
