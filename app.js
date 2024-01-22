@@ -93,12 +93,15 @@ inquirer
             },
           ])
           .then(async (answers) => {
-            let { id } = await findspecificData(
-              'department',
+            let data = await findspecificData(
+              "department",
               "id",
               "name",
+              "=",
               `'${answers.roleDepartment}'`
             );
+
+            let { id } = data[0];
             answers.roleName = capitalize(answers.roleName);
             answers.roleDepartment = capitalize(answers.roleDepartment);
             insertData(
@@ -106,9 +109,13 @@ inquirer
               ["title", "salary", "department_id"],
               [`'${answers.roleName}'`, answers.salary, id]
             );
-            console.log(`Added ${answers.roleName} to ${answers.roleDepartment} database.`)
+            console.log(
+              `Added ${answers.roleName} to ${answers.roleDepartment} database.`
+            );
           });
         break;
+      //case "Add An Employee":
+      // break;
       //case:
       // break;
     }
