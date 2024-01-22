@@ -4,7 +4,8 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "start":"node --watch app.js"
+    "start": "node --watch app.js ",
+    "dev": "node --watch ./db/database.js "
   },
   "keywords": [],
   "author": "",
@@ -12,6 +13,7 @@
   "dependencies": {
     "dotenv": "^16.3.2",
     "inquirer": "^8.2.4",
-    "mysql2": "^3.7.1"
+    "mysql2": "^3.7.1",
+    "nodejs-console-table": "^1.0.5"
   }
 }
