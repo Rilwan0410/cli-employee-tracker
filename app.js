@@ -1,9 +1,8 @@
 const mysql = require("mysql2");
 const inquirer = require("inquirer");
 const dotenv = require("dotenv");
-const { getDepartments } = require("./db/database");
+const { getData } = require("./db/database");
 dotenv.config();
-
 const database = mysql.createConnection(
   {
     host: process.env.HOST,
@@ -35,10 +34,31 @@ inquirer
   .then((answers) => {
     const { option } = answers;
     switch (option) {
-        case "View All Departments":
-            return getDepartments().then((result) => {
-                return result
+      case "View All Departments":
+        return getData(["*"], "department").then((result) => {
+          return result;
         });
         break;
+      case "View All roles":
+        return getData(
+          ["role.id", "title", "name as department", "salary"],
+          `role INNER JOIN department ON department_id = department.id `
+        ).then((result) => {
+          return result;
+        });
+        break;
+      case "View All Employees":
+        return getData(
+          ["employee.id", "first_name", "last_name", `title`, "salary", "name"],
+          `employees_db.employee
+          INNER JOIN employees_db.role ON role_id = role.id
+          INNER JOIN employees_db.department ON department_id = department.id`
+        );
+        // case:
+        // break;
+        //case:
+        // break;
+        //case:
+        // break;
     }
   });

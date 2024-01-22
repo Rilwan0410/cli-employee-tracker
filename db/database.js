@@ -4,7 +4,7 @@ const dotenv = require("dotenv");
 const createTable = require("../utils/utils");
 dotenv.config();
 
-async function getDepartments() {
+async function getData(filter, query) {
   try {
     const db = await mysql.createConnection({
       host: process.env.HOST,
@@ -13,13 +13,17 @@ async function getDepartments() {
       port: process.env.MYSQL_PORT,
       database: process.env.DATABASE,
     });
-    let [data] = await db.execute(`SELECT * FROM department;`);
-    createTable(data);
+    let [data] = await db.query(`SELECT ${filter.join(',')} FROM ${query}`);
+    if (data.length > 0) {
+      return createTable(data);
+    } else {
+      console.log("No Data Available.");
+    }
   } catch (err) {
     console.log(err);
   }
 }
 
 module.exports = {
-  getDepartments,
+  getData,
 };
