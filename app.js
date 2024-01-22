@@ -67,7 +67,7 @@ inquirer
           .then((answers) => {
             answers.addDepartment = capitalize(answers.addDepartment)
             insertData('department', ["name"],[ `'${answers.addDepartment}'`])
-            console.log(`Added ${answers.addDepartment} to Department`)
+            console.log(`Added ${answers.addDepartment} to Department database`)
           });
 
         break;
