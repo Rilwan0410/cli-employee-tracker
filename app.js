@@ -106,7 +106,6 @@ inquirer
               ["title", "salary", "department_id"],
               [`'${answers.roleName}'`, answers.salary, id]
             );
-            // console.log(answers);
             console.log(`Added ${answers.roleName} to ${answers.roleDepartment} database.`)
           });
         break;
