@@ -1,7 +1,8 @@
 const mysql = require("mysql2");
 const inquirer = require("inquirer");
 const dotenv = require("dotenv");
-const { getData } = require("./db/database");
+const { getData, insertData } = require("./db/database");
+const {capitalize} = require('./utils/utils')
 dotenv.config();
 const database = mysql.createConnection(
   {
@@ -54,11 +55,25 @@ inquirer
           INNER JOIN employees_db.role ON role_id = role.id
           INNER JOIN employees_db.department ON department_id = department.id`
         );
-        // case:
-        // break;
-        //case:
-        // break;
-        //case:
-        // break;
+      case "Add A Department":
+        inquirer
+          .prompt([
+            {
+              type: "input",
+              name: "addDepartment",
+              message: "What is the name of the deparment?",
+            },
+          ])
+          .then((answers) => {
+            answers.addDepartment = capitalize(answers.addDepartment)
+            insertData('department', ["name"],[ `'${answers.addDepartment}'`])
+            console.log(`Added ${answers.addDepartment} to Department`)
+          });
+
+        break;
+      //case:
+      // break;
+      //case:
+      // break;
     }
   });
