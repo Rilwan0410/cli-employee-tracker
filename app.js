@@ -1,7 +1,7 @@
 const mysql = require("mysql2");
 const inquirer = require("inquirer");
 const dotenv = require("dotenv");
-const { getData, insertData, findspecificData } = require("./db/database");
+const { getData, insertData, findSpecificData } = require("./db/database");
 const { capitalize } = require("./utils/utils");
 dotenv.config();
 const database = mysql.createConnection(
@@ -87,13 +87,30 @@ inquirer
               message: "What is the salary of the role?",
             },
             {
-              type: "input",
+              type: "list",
               name: "roleDepartment",
               message: "Which department does the role belong to?",
+              choices:
+               async () => {
+                let data = await findSpecificData(
+                  "department",
+                  "name",
+                  "id",
+                  ">",
+                  "0"
+                ).then(async (data) => {
+                  let arr = [];
+                  await data.map((each) => {
+                    arr.push(each.name);
+                  });
+                  return arr;
+                });
+                return data;
+              },
             },
           ])
           .then(async (answers) => {
-            let data = await findspecificData(
+            let data = await findSpecificData(
               "department",
               "id",
               "name",
@@ -103,7 +120,7 @@ inquirer
 
             let { id } = data[0];
             answers.roleName = capitalize(answers.roleName);
-            answers.roleDepartment = capitalize(answers.roleDepartment);
+            // answers.roleDepartment = capitalize(answers.roleDepartment);
             insertData(
               "role",
               ["title", "salary", "department_id"],
@@ -114,8 +131,8 @@ inquirer
             );
           });
         break;
-      //case "Add An Employee":
-      // break;
+      case "Add An Employee":
+        break;
       //case:
       // break;
     }

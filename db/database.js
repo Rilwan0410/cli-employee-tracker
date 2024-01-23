@@ -1,5 +1,4 @@
 const mysql = require("mysql2/promise");
-const inquirer = require("inquirer");
 const dotenv = require("dotenv");
 const { createTable } = require("../utils/utils");
 dotenv.config();
@@ -45,7 +44,7 @@ async function insertData(tableName, filter, values) {
   }
 }
 
-async function findspecificData(table, find, fieldOne, delimiter, fieldTwo) {
+async function findSpecificData(table, find, fieldOne, delimiter, fieldTwo) {
   try {
     const db = await mysql.createConnection({
       host: process.env.HOST,
@@ -66,9 +65,8 @@ async function findspecificData(table, find, fieldOne, delimiter, fieldTwo) {
 module.exports = {
   getData,
   insertData,
-  findspecificData,
+  findSpecificData,
 };
 
-findspecificData("role", "*", "id", ">", "0").then(data => {
-  console.log(data)
-})
+
+
