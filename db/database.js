@@ -63,10 +63,38 @@ async function findSpecificData(table, find, fieldOne, delimiter, fieldTwo) {
   }
 }
 
+async function updateData(
+  tableToUpdate,
+  changeEquation,
+  findByA,
+  delimiter,
+  findByB
+) {
+  try {
+    const db = await mysql.createConnection({
+      host: process.env.HOST,
+      user: process.env.MYSQL_USER,
+      password: process.env.MYSQL_PASSWORD,
+      port: process.env.MYSQL_PORT,
+      database: process.env.DATABASE,
+    });
+    let [data] = await db.query(
+      `UPDATE ${tableToUpdate} SET ${changeEquation} WHERE ${findByA} ${delimiter} ${findByB}`
+    );
+    // console.log(data)
+    return data;
+  } catch (err) {
+    console.log(err);
+  }
+}
+
 module.exports = {
   getData,
   insertData,
   findSpecificData,
+  updateData,
 };
 
-// findSpecificData()
+// updateData('employee','id = 30', 'first_name', '=', '"ja"' ).then(data => {
+//   console.log(data)
+// })

@@ -1,7 +1,12 @@
 const mysql = require("mysql2");
 const inquirer = require("inquirer");
 const dotenv = require("dotenv");
-const { getData, insertData, findSpecificData } = require("./db/database");
+const {
+  getData,
+  insertData,
+  findSpecificData,
+  updateData,
+} = require("./db/database");
 const { capitalize } = require("./utils/utils");
 dotenv.config();
 const database = mysql.createConnection(
@@ -224,17 +229,94 @@ inquirer
             insertData(
               "employee",
               ["id", "first_name", "last_name", "role_id", "manager_id"],
-              [122,
+              [
+                123,
                 `"${answers.firstName}"`,
                 `"${answers.lastName}"`,
                 roleId,
                 `${answers.manager == "None" ? null : managerId}`,
               ]
             );
-            console.log(`Added ${ answers.firstName} ${answers.lastName} to the ${answers.role} database.`)
+            console.log(
+              `Added ${answers.firstName} ${answers.lastName} to the ${answers.role} database.`
+            );
           });
         break;
-      //case:
-      // break;
+      case "Update An Employee Role":
+        inquirer
+          .prompt([
+            {
+              type: "list",
+              name: "employeeToUpdate",
+              message: "Which employee's role do you want to update?",
+              choices: async () => {
+                let data = await findSpecificData(
+                  "employee",
+                  "CONCAT(first_name, ' ', last_name) as name",
+                  "id",
+                  ">",
+                  "0"
+                ).then(async (data) => {
+                  let arr = [];
+                  await data.map((each) => {
+                    arr.push(each.name);
+                  });
+                  return arr;
+                });
+                return data;
+              },
+            },
+
+            {
+              type: "list",
+              name: "changeRoleTo",
+              message: "Which role do you want assign this employee to?",
+              choices: async () => {
+                let data = await findSpecificData(
+                  "role",
+                  "title",
+                  "id",
+                  ">",
+                  `0`
+                ).then(async (data) => {
+                  let arr = [];
+                  await data.map((each) => {
+                    arr.push(each.title);
+                  });
+                  return arr;
+                });
+                return data;
+              },
+            },
+          ])
+          .then(async (answers) => {
+            let roleInfo = await findSpecificData(
+              "role",
+              "id",
+              "title",
+              "=",
+              `"${answers.changeRoleTo}"`
+            );
+            let employeeInfo = await findSpecificData(
+              "employee",
+              "id",
+              "CONCAT(first_name,' ', last_name)",
+              "=",
+              `"${answers.employeeToUpdate}"`
+            );
+            let { id: roleId } = roleInfo[0];
+            let { id: employeeId } = employeeInfo[0];
+            updateData(
+              "employee",
+              `role_id = ${roleId}`,
+              `CONCAT(first_name, ' ', last_name)`,
+              "=",
+              `"${answers.employeeToUpdate}"`
+            );
+            console.log(
+              `Updated ${answers.employeeToUpdate}'s role to ${answers.changeRoleTo}`
+            );
+          });
+        break;
     }
   });
