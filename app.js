@@ -221,18 +221,17 @@ inquirer
             const { id: roleId } = roleInfo[0];
             answers.firstName = capitalize(answers.firstName);
             answers.lastName = capitalize(answers.lastName);
-            console.log(managerId);
             insertData(
               "employee",
-              ["first_name", "last_name", "role_id", "manager_id"],
-              [
+              ["id", "first_name", "last_name", "role_id", "manager_id"],
+              [122,
                 `"${answers.firstName}"`,
                 `"${answers.lastName}"`,
                 roleId,
                 `${answers.manager == "None" ? null : managerId}`,
               ]
             );
-            console.log(answers);
+            console.log(`Added ${ answers.firstName} ${answers.lastName} to the ${answers.role} database.`)
           });
         break;
       //case:
