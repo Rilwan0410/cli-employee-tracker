@@ -50,10 +50,22 @@ inquirer
         break;
       case "View All Employees":
         return getData(
-          ["employee.id", "first_name", "last_name", `title`, "salary", "name"],
-          `employees_db.employee
+          [
+            "employee.id",
+            "employee.first_name",
+            "employee.last_name",
+            "title",
+            "department.name as department",
+            "salary",
+            "CONCAT(e.first_name, ' ', e.last_name) as manager",
+          ],
+          ` 
+          employees_db.employee
           INNER JOIN employees_db.role ON role_id = role.id
-          INNER JOIN employees_db.department ON department_id = department.id`
+          INNER JOIN employees_db.department ON department_id = department.id
+		      LEFT OUTER JOIN employee as e ON e.id = employee.manager_id
+          ORDER BY last_name
+          `
         );
       case "Add A Department":
         inquirer
@@ -90,8 +102,7 @@ inquirer
               type: "list",
               name: "roleDepartment",
               message: "Which department does the role belong to?",
-              choices:
-               async () => {
+              choices: async () => {
                 let data = await findSpecificData(
                   "department",
                   "name",
@@ -132,6 +143,97 @@ inquirer
           });
         break;
       case "Add An Employee":
+        inquirer
+          .prompt([
+            {
+              type: "input",
+              name: "firstName",
+              message: "What is the employee's first name?",
+            },
+            {
+              type: "input",
+              name: "lastName",
+              message: "What is the employee's last name?",
+            },
+            {
+              type: "list",
+              name: "manager",
+              message: "Who is the employee's manager?",
+              choices: async () => {
+                let data = await findSpecificData(
+                  "employee",
+                  "first_name, last_name",
+                  "manager_id",
+                  ">",
+                  `0`
+                ).then(async (data) => {
+                  let arr = ["None"];
+                  await data.map((each) => {
+                    arr.push(
+                      capitalize(each.first_name) +
+                        " " +
+                        capitalize(each.last_name)
+                    );
+                  });
+                  return arr;
+                });
+                return data;
+              },
+            },
+            {
+              type: "list",
+              name: "role",
+              message: "What is the employee's role?",
+              choices: async () => {
+                let data = await findSpecificData(
+                  "role",
+                  "title",
+                  "id",
+                  ">",
+                  `0`
+                ).then(async (data) => {
+                  let arr = [];
+                  await data.map((each) => {
+                    arr.push(each.title);
+                  });
+                  return arr;
+                });
+                return data;
+              },
+            },
+          ])
+          .then(async (answers) => {
+            let managerInfo = await findSpecificData(
+              "employee",
+              "id",
+              "CONCAT(first_name, ' ', last_name)",
+              "=",
+              `"${answers.manager}"`
+            );
+            let roleInfo = await findSpecificData(
+              "role",
+              "id",
+              "title",
+              "=",
+              `"${answers.role}"`
+            );
+            let managerId = managerInfo[0]?.id;
+            const { id: roleId } = roleInfo[0];
+            answers.firstName = capitalize(answers.firstName);
+            answers.lastName = capitalize(answers.lastName);
+            console.log(managerId);
+            insertData(
+              "employee",
+              ["first_name", "last_name", "role_id", "manager_id"],
+              [
+                `"${answers.firstName}"`,
+                `"${answers.lastName}"`,
+                roleId,
+                `${answers.manager == "None" ? null : managerId}`,
+              ]
+            );
+            console.log(answers);
+          });
         break;
       //case:
       // break;

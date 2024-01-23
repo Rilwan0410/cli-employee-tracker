@@ -56,6 +56,7 @@ async function findSpecificData(table, find, fieldOne, delimiter, fieldTwo) {
     let [data] = await db.query(
       `SELECT ${find} FROM ${table} WHERE ${fieldOne} ${delimiter} ${fieldTwo}`
     );
+    // console.log(data)
     return data;
   } catch (err) {
     console.log(err);
@@ -68,5 +69,4 @@ module.exports = {
   findSpecificData,
 };
 
-
-
+// findSpecificData()
