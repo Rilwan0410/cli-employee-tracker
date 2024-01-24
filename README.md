@@ -10,4 +10,5 @@ run npm start in the terminal
 
 ## Links
 Link to GitHub repository: https://github.com/Rilwan0410/cli-employee-tracker  
-Link to video walkthrough: 
+
+Link to video walkthrough: https://watch.screencastify.com/v/zrqiK8EbHtwFVm4KKHPY 
