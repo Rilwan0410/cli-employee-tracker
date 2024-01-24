@@ -81,7 +81,6 @@ async function updateData(
     let [data] = await db.query(
       `UPDATE ${tableToUpdate} SET ${changeEquation} WHERE ${findByA} ${delimiter} ${findByB}`
     );
-    // console.log(data)
     return data;
   } catch (err) {
     console.log(err);
@@ -94,7 +93,3 @@ module.exports = {
   findSpecificData,
   updateData,
 };
-
-// updateData('employee','id = 30', 'first_name', '=', '"ja"' ).then(data => {
-//   console.log(data)
-// })
