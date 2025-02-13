@@ -319,6 +319,7 @@ function start() {
             });
 
           break;
+      
       }
     });
 }
